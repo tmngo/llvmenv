@@ -13,7 +13,7 @@ use url::Url;
 use crate::error::*;
 
 /// Remote LLVM/Clang resource
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum Resource {
     /// Remote Subversion repository
     Svn { url: String },
@@ -128,13 +128,13 @@ impl Resource {
             .silent()
             .check_run()?;
         Command::new("git")
-            .args(&["remote", "add", "origin"])
+            .args(["remote", "add", "origin"])
             .arg(url_str)
             .current_dir(tmp_dir.path())
             .silent()
             .check_run()?;
         match Command::new("git")
-            .args(&["ls-remote"])
+            .args(["ls-remote"])
             .current_dir(tmp_dir.path())
             .silent()
             .check_run()
@@ -164,16 +164,16 @@ impl Resource {
         }
         match self {
             Resource::Svn { url, .. } => Command::new("svn")
-                .args(&["co", url.as_str(), "-r", "HEAD"])
+                .args(["co", url.as_str(), "-r", "HEAD"])
                 .arg(dest)
                 .check_run()?,
             Resource::Git { url, branch } => {
                 info!("Git clone {}", url);
                 let mut git = Command::new("git");
-                git.args(&["clone", url.as_str(), "-q", "--depth", "1"])
+                git.args(["clone", url.as_str(), "-q", "--depth", "1"])
                     .arg(dest);
                 if let Some(branch) = branch {
-                    git.args(&["-b", branch]);
+                    git.args(["-b", branch]);
                 }
                 git.check_run()?;
             }

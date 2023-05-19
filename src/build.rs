@@ -118,7 +118,7 @@ fn local_builds() -> Result<Vec<Build>> {
         .unwrap()
         .filter_map(|path| {
             if let Ok(path) = path {
-                path.parent().map(|path| Build::from_path(path))
+                path.parent().map(Build::from_path)
             } else {
                 None
             }

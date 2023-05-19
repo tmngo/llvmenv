@@ -86,7 +86,7 @@ use crate::{config::*, error::*, resource::*};
 /// assert_eq!(CMakeGenerator::from_str("VisualStudio").unwrap(), CMakeGenerator::VisualStudio);
 /// assert!(CMakeGenerator::from_str("MySuperBuilder").is_err());
 /// ```
-#[derive(Deserialize, PartialEq, Debug, Clone)]
+#[derive(Deserialize, PartialEq, Eq, Debug, Clone)]
 pub enum CMakeGenerator {
     /// Use platform default generator (without -G option)
     Platform,
@@ -154,7 +154,7 @@ impl CMakeGenerator {
 }
 
 /// CMake build type
-#[derive(Deserialize, Debug, Clone, Copy, PartialEq)]
+#[derive(Deserialize, Debug, Clone, Copy, PartialEq, Eq)]
 pub enum BuildType {
     Debug,
     Release,
@@ -185,7 +185,7 @@ impl FromStr for BuildType {
 }
 
 /// LLVM Tools e.g. clang, compiler-rt, and so on.
-#[derive(Deserialize, Debug, Clone, PartialEq)]
+#[derive(Deserialize, Debug, Clone, PartialEq, Eq)]
 pub struct Tool {
     /// Name of tool (will be downloaded into `tools/{name}` by default)
     pub name: String,
@@ -231,7 +231,7 @@ impl Tool {
 /// Setting for both Remote and Local entries. TOML setting file will be decoded into this struct.
 ///
 ///
-#[derive(Deserialize, Debug, Default, Clone, PartialEq)]
+#[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
 pub struct EntrySetting {
     /// URL of remote LLVM resource, see also [resouce](../resource/index.html) module
     pub url: Option<String>,
@@ -263,7 +263,7 @@ pub struct EntrySetting {
 /// Describes how to compile LLVM/Clang
 ///
 /// See also [module level document](index.html).
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum Entry {
     Remote {
         name: String,
@@ -558,7 +558,7 @@ impl Entry {
     pub fn build(&self, nproc: usize) -> Result<()> {
         self.configure()?;
         process::Command::new("cmake")
-            .args(&[
+            .args([
                 "--build",
                 &format!("{}", self.build_dir()?.display()),
                 "--target",
